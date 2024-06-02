@@ -9,3 +9,12 @@ Route::post('/login', [AuthController::class, 'store_login_credentials']);
 
 
 Route::get('/user/dashboard', [UserController::class, 'show_home']);
+
+
+
+
+
+//Test FE
+Route::get('user/aspiration/create', function () {
+    return view('aspiration.create');
+});
