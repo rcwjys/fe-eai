@@ -32,6 +32,7 @@ class AuthController extends Controller
 
             if ($response->successful()) {
                 Session::put('isAuthorize', true);
+                
                 $data = $response->json();
                 
                 return redirect(url('/user/dashboard'));
@@ -42,5 +43,20 @@ class AuthController extends Controller
         } catch (\Throwable $e) {
             dd($e->getMessage());
         }
+    }
+
+    public function show_register_form() 
+    {
+        return view('Authentication.register');
+    }
+
+    public function store_register_form()
+    {
+
+    }
+
+    public function logout()
+    {
+
     }
 }
