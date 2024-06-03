@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use Symfony\Component\HttpFoundation\Response;
 
-class GuestMiddleware
+class AdminOnly
 {
     /**
      * Handle an incoming request.
@@ -16,11 +16,12 @@ class GuestMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (Session::get('isAuthorize') === false) {
+
+        if (Session::get('is_admin') === true) {
             return $next($request);
         } else {
             return redirect(url('/user/dashboard'));
         }
-        
+       
     }
 }

@@ -1,4 +1,4 @@
-@extends('User.Template.guest')
+@extends('Guest.Template.main')
 @section('title', 'Detail Candidate')
 @section('content')
 
