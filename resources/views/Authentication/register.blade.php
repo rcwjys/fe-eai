@@ -9,26 +9,19 @@
 <body>
     <div class="container mt-5">
         <h2>Registration Form</h2>
-        <form id="registrationForm">
-            <div class="form-group">
+        <form action="{{ url('/register') }}" method="POST" id="registrationForm">
+            @csrf
+            <div class="form-group mt-3">
                 <label for="username">Username</label>
-                <input type="text" class="form-control" id="username" required>
+                <input type="text" class="form-control" id="username" name="username" required>
             </div>
             <div class="form-group">
                 <label for="user_email">Email address</label>
-                <input type="email" class="form-control" id="user_email" required>
+                <input type="email" class="form-control" id="user_email" name="user_email" required>
             </div>
             <div class="form-group">
                 <label for="user_password">Password</label>
-                <input type="password" class="form-control" id="user_password" required>
-            </div>
-            <div class="form-group">
-                <label for="user_attempt">User Attempt</label>
-                <input type="number" class="form-control" id="user_attempt" value="1" required>
-            </div>
-            <div class="form-group form-check">
-                <input type="checkbox" class="form-check-input" id="is_admin">
-                <label class="form-check-label" for="is_admin">Is Admin</label>
+                <input type="password" class="form-control" id="user_password" name="user_password" required>
             </div>
             <button type="submit" class="btn btn-primary">Register</button>
         </form>

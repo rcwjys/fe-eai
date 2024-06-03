@@ -10,4 +10,9 @@ class UserController extends Controller
     {
         return view('User.index');
     }
+
+    public function show_entry_point()
+    {
+        return view('index');
+    }
 }
