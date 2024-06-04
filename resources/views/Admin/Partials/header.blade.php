@@ -22,6 +22,12 @@
           <a class="nav-link" href="{{url('/register')}}">Buat User</a>
         </li>
         <li class="nav-item">
+            <a class="nav-link" href="{{url('/aspiration-address')}}">Tujuan Aspirasi</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{url('/aspiration')}}">Aspirasi</a>
+          </li>
+        <li class="nav-item">
           <form action="{{url('/logout')}}" method="POST">
             @csrf
             <button class="nav-link" type="submit">Logout</button>

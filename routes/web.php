@@ -8,6 +8,7 @@ use App\Http\Controllers\GuestController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AspirationController;
 use App\Http\Controllers\VoteController;
+use App\Http\Controllers\AspirationAddressController;
 use App\Http\Middleware\AddTokenMiddleware;
 use App\Http\Middleware\AdminOnly;
 use App\Http\Middleware\Authenticate;
@@ -101,25 +102,30 @@ Route::middleware([Authenticate::class, AdminOnly::class])->group(function () {
 
   Route::delete('/votes/delete/{vote_id}', [VoteController::class, 'delete_vote_data']);
 
-;
+  // ! Asspiration Address
+  Route::get('/aspiration-address', [AspirationAddressController::class, 'get_all_aspiration_address']);
+  Route::get('/create-aspiration-address', [AspirationAddressController::class, 'show_create_aspiration_address_form']);
+  Route::post('/store-aspiration-address', [AspirationAddressController::class, 'store_aspiration_address_data']);
+  Route::get('/edit-aspiration-address/{aspiration_address_id}', [AspirationAddressController::class, 'show_aspiration_address_edit_form']);
+  Route::patch('/edit-aspiration-address/{aspiration_address_id}', [AspirationAddressController::class, 'update_aspiration_address']);
+  Route::delete('/aspiration-address/{aspiration_address_id}/delete', [AspirationAddressController::class, 'delete_aspiration_address']);
+
+  Route::get('/aspiration', [AspirationController::class, 'get_all_aspiration']);
 
 });
 
 
 Route::get('/user/dashboard', [UserController::class, 'show_home']);
 
-// Route::middleware('auth')->group(function () {
-//     Route::get('/aspiration/create', 'AspirationController@create')->name('aspiration.create');
-//     Route::post('/aspiration/store', 'AspirationController@store')->name('aspiration.store');
-// });
-Route::get('/aspiration/create', [AspirationController::class, 'create'])->name('aspiration.create');
-Route::post('/aspiration/store', [AspirationController::class, 'store'])->name('aspiration.store');
+// ! Asspiration
+Route::get('/aspiration/create', [AspirationController::class, 'create']);
+Route::post('/aspiration/store', [AspirationController::class, 'store']);
 
 
 
 
 //Test FE
-Route::get('user/aspiration/create', function () {
-    return view('aspiration.create');
+Route::get('/test', function () {
+    return view('admin.aspirationaddress.test');
 });
 
