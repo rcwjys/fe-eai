@@ -10,7 +10,7 @@
           <a class="nav-link" href="{{url('/user/dashboard')}}">Home</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#">Features</a>
+          <a class="nav-link" href="{{ route('aspiration.create') }}">Aspirasi</a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="#">Pricing</a>

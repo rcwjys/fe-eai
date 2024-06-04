@@ -1,48 +1,52 @@
 @extends('User.Template.main')
-@section('title', 'Create Aspiration')
-
+@section('title', 'User Dashboard')
 @section('content')
 
+<div class="container mt-3">
+  <div class="jumbotron jumbotron-fluid">
+    <div class="container">
+      <h2 class="display-4">Halo Mahasiswa Sistem Informasi</h2>
 
+      <div class="card card-sm w-75">
+        <div class="card-body">
+            <p class="lead">Ayo berikan aspirasi terbaik kalian untuk memajukan jurusan tercinta kita ini</p>
 
-    <div class="input-group mb-3">
-        <span class="input-group-text" id="basic-addon1">@</span>
-        <input type="text" class="form-control" placeholder="Username" aria-label="Username" aria-describedby="basic-addon1">
-    </div>
+            <form method="POST" action="{{ route('aspiration.store') }}">
+                @csrf
 
-    <div class="input-group mb-3">
-        <input type="text" class="form-control" placeholder="Recipient's username" aria-label="Recipient's username" aria-describedby="basic-addon2">
-        <span class="input-group-text" id="basic-addon2">@example.com</span>
-    </div>
+                @if(auth()->user())
+                    <input type="hidden" name="user_id" value="{{ auth()->user()->user_id }}">
+                @endif
 
-    <div class="mb-3">
-        <label for="basic-url" class="form-label">Your vanity URL</label>
-        <div class="input-group">
-        <span class="input-group-text" id="basic-addon3">https://example.com/users/</span>
-        <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3 basic-addon4">
+                <div class="form-floating mb-4">
+                    <select class="form-select" id="floatingSelect" name="aspiration_address_id" aria-label="Floating label select example">
+                        <option selected disabled>Tujuan Aspirasi</option>
+                        @if (isset($aspirationAddresses) && is_array($aspirationAddresses) && count($aspirationAddresses) > 0)
+                            @foreach ($aspirationAddresses as $address)
+                                <option value="{{ $address['aspiration_address_id'] }}">{{ $address['aspiration_address'] }}</option>
+                            @endforeach
+                        @else
+                            <option disabled>No aspiration addresses available</option>
+                        @endif
+                    </select>
+                    <label for="floatingSelect">Tujuan Aspirasi</label>
+                </div>
+
+                <div class="input-group mb-6">
+                    <span class="input-group-text">Aspirasi</span>
+                    <textarea class="form-control" name="aspiration" aria-label="With textarea"></textarea>
+                </div>
+
+                <input class="btn btn-primary mt-4" type="submit" value="Submit">
+            </form>
         </div>
-        <div class="form-text" id="basic-addon4">Example help text goes outside the input group.</div>
-    </div>
-
-    <div class="input-group mb-3">
-        <span class="input-group-text">$</span>
-        <input type="text" class="form-control" aria-label="Amount (to the nearest dollar)">
-        <span class="input-group-text">.00</span>
-    </div>
-
-    <div class="input-group mb-3">
-        <input type="text" class="form-control" placeholder="Username" aria-label="Username">
-        <span class="input-group-text">@</span>
-        <input type="text" class="form-control" placeholder="Server" aria-label="Server">
-    </div>
-
-    <div class="input-group">
-        <span class="input-group-text">With textarea</span>
-        <textarea class="form-control" aria-label="With textarea"></textarea>
     </div>
 
 
 
+    </div>
+  </div>
+</div>
 
 
 @endsection
