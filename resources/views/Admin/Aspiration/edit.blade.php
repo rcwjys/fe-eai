@@ -11,11 +11,13 @@
         <div class="card-body">
             <p class="lead">Ayo berikan aspirasi terbaik kalian untuk memajukan jurusan tercinta kita ini</p>
 
-            <form method="POST" action="/store-aspiration">
+            <form method="POST" action="{{url('/edit-aspiration/'. $aspiration["aspiration_id"])}}">
                 @csrf
+                @method('PATCH')
+
 
                 <div class="form-floating mb-4">
-                    <select class="form-select" id="floatingSelect" name="aspiration_address_id" aria-label="Floating label select example">
+                    <select class="form-select" id="floatingSelect" name="aspiration_address_id" aria-label="Floating label select example" >
                         <option selected disabled>Tujuan Aspirasi</option>
                         @if (isset($aspirationAddresses) && is_array($aspirationAddresses) && count($aspirationAddresses) > 0)
                             @foreach ($aspirationAddresses as $address)
@@ -30,7 +32,11 @@
 
                 <div class="input-group mb-6">
                     <span class="input-group-text">Aspirasi</span>
-                    <textarea class="form-control" name="aspiration" aria-label="With textarea"></textarea>
+                    <input class="form-control" name="aspiration" aria-label="With textarea" value="{{ $aspiration['aspiration'] ?? '' }}"></input>
+                </div>
+
+                <div class="input-group mb-6">
+                    <input class="form-control" type="hidden" name="aspiration_status" aria-label="With textarea" value="{{ $aspiration['aspiration_status'] ?? '' }}"></input>
                 </div>
 
                 <input class="btn btn-primary mt-4" type="submit" value="Submit">
