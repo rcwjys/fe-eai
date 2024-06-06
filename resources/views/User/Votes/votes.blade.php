@@ -1,4 +1,4 @@
-@extends('Admin.Template.main')
+@extends('User.Template.main')
 @section('title', 'Votes')
 @section('content')
 
