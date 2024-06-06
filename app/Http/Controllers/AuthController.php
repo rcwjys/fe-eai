@@ -30,19 +30,23 @@ class AuthController extends Controller
                 'user_password' => $validate_credentials['user_password']
             ]);
 
+           
             if ($response->successful()) {
                 $data = $response->json();
                 Session::put('is_admin', $data['user_role'] === 'admin' ? true : false);
                 Session::put('isAuthorize', true);
                 Session::put('_access_token', $data['accessToken']);
                 Session::put('_user_id', $data['user_id']);
-
+            
                 if (Session::get('is_admin') === true) {
                     return view('Admin.index');
                 } else {
-                    return redirect(url('/login'));
+                    if (Session::get('isAuthorize')) {
+                        return redirect(url('/user/dashboard'));
+                    } else {
+                        return redirect(url('/login'));
+                    }
                 }
-
             } else {
                 return back();
             }

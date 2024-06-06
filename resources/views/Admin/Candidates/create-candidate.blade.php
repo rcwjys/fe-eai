@@ -1,4 +1,4 @@
-@extends('User.Template.main')
+@extends('Admin.Template.main')
 @section('title', 'Create Candidate')
 @section('content')
 <div class="container mt-5">

@@ -42,7 +42,7 @@ class VoteController extends Controller
             if ($response->successful()) {
 
                 $votes_data = $response->json();
-                return view('Admin.votes', [
+                return view('Admin.Votes.votes', [
                     'votes' => $votes_data["data"]["votes"]
                 ]);
             } else {
@@ -62,7 +62,18 @@ class VoteController extends Controller
 
             if ($response->successful()) {
                 $data = $response->json();
-                return view('Admin.detail-votes', ['vote' => $data["data"]]);
+                return view('Admin.Votes.detail-votes', ['vote' => $data["data"]]);
+
+                if (Session::get('is_admin') === true)
+                    return view('Admin.Votes.votes', [
+                        'vote' => $data['data']
+
+                ]);
+                    if (Session::get('isAuthorize') === true)
+                        return view('User.Votes.votes', [
+                            'vote' => $data['data']
+                        
+                ]);
             } else {
                 return back();
             }
@@ -78,9 +89,17 @@ class VoteController extends Controller
         if ($response->successful()) {
             $candidates_data = $response->json();
 
-            return view('Admin.create-votes', [
+            if (Session::get('is_admin') === true)
+            return view('Admin.Votes.create-votes', [
                 'candidates' => $candidates_data['data']
-            ]);
+
+        ]);
+            if (Session::get('is_admin') === False)
+                return view('User.Votes.create-votes', [
+                    'candidates' => $candidates_data['data']
+                
+        ]);
+        
         }else {
             return back();
         }
@@ -98,9 +117,16 @@ class VoteController extends Controller
                 'candidate_id' => $request->candidate_id
             ]);
             if ($response->successful()) {
-                return redirect(url('/'));
+                
+
+                if (Session::get('is_admin') === true) {
+                    return redirect(url('/admin/dashboard'));
+                }
+
+                else {
+                    return redirect(url('/user/dashboard'));
+                }
             } else {
-                dd($response->json());
                 return back();
             }
 
