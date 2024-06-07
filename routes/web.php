@@ -123,8 +123,7 @@ Route::middleware([Authenticate::class, AdminOnly::class])->group(function () {
 
   Route::delete('/aspiration/{aspiration_id}/delete', [AspirationController::class, 'delete_aspiration']);
 
-  // Route::get('/edit-aspiration/status/{aspiration_id}', [AspirationController::class, 'show_aspiration_edit_status_form']);
-  // Route::patch('/edit-aspiration/{aspiration_id}', [AspirationController::class, 'update_status_aspiration']);
+
 
 
 

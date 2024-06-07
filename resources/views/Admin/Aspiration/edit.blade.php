@@ -35,7 +35,7 @@
                 </div>
 
                 <div class="input-group mb-6 mt-4">
-                <select class="form-control" name="aspiration_status">
+                <select class="form-select" name="aspiration_status">
                     <option value="{{ $aspiration['aspiration_status'] ?? '' }}" selected>{{ $aspiration['aspiration_status'] ?? '' }}</option>
                     <option value="pending">pending</option>
                     <option value="approved">approved</option>

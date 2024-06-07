@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
 
+
 class AspirationController extends Controller
 {
     public function send_request(String $method, String $url, Bool $header, array $data = [])
@@ -71,11 +72,30 @@ class AspirationController extends Controller
     public function get_detail_aspiration(Request $request)
     {
         try {
-            $response = $this->send_request('get', 'http://localhost:3000/api/v1/aspiration/'. $request->aspiration_id, true);
+
+            $response = $this->send_request('get', 'http://localhost:3000/api/v1/aspiration/' . $request->aspiration_id, true);
 
             if ($response->successful()) {
                 $data = $response->json();
-                return view('admin.aspiration.detail', ['aspiration' => $data["data"]]);
+                $aspiration = $data['data'];
+
+                $userResponse = $this->send_request('get', 'http://localhost:3000/api/v1/userId/' . $aspiration['user_id'], true);
+                if ($userResponse->successful()) {
+                    $user = $userResponse->json()["data"];
+                    $aspiration['username'] = $user['username'];
+                } else {
+                    $aspiration['username'] = 'Unknown User';
+                }
+
+                $addressResponse = $this->send_request('get', 'http://localhost:3000/api/v1/aspiration-addresses/' . $aspiration['aspiration_address_id'], true);
+                if ($addressResponse->successful()) {
+                    $address = $addressResponse->json()["data"];
+                    $aspiration['aspiration_address'] = $address['aspiration_address'];
+                } else {
+                    $aspiration['aspiration_address'] = 'Unknown Address';
+                }
+
+                return view('admin.aspiration.detail', ['aspiration' => $aspiration]);
             } else {
                 return back();
             }
@@ -180,7 +200,6 @@ class AspirationController extends Controller
     public function update_aspiration(Request $request)
 {
     try {
-        // Kirim request ke API
 
         $response = $this->send_request('patch', 'http://localhost:3000/api/v1/aspiration/' . $request->aspiration_id, true, [
             'user_id' => Session::get('_user_id'),
@@ -219,7 +238,9 @@ class AspirationController extends Controller
     }
 
 
-    
+
+
+
 
 
 
