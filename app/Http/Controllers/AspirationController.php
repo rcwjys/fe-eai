@@ -138,25 +138,29 @@ class AspirationController extends Controller
         }
     }
 
+
     public function show_aspiration_edit_form(Request $request)
     {
         $aspirationResponse = $this->send_request('get', 'http://localhost:3000/api/v1/aspiration/' . $request->aspiration_id, true);
         $addressesResponse = $this->send_request('get','http://localhost:3000/api/v1/aspiration-addresses?aspiration_id=' . $request->aspiration_id, true);
 
-
         if ($aspirationResponse->successful() && $addressesResponse->successful()) {
             $aspiration = $this->getAspirationData($aspirationResponse);
             $aspirationAddresses = $this->getAspirationAddresses($addressesResponse);
+            $statusLabels = config('aspiration.Status');
 
-            return view('admin.aspiration.edit', [
-                'aspiration' => $aspiration,
-                'aspirationAddresses' => $aspirationAddresses,
-            ]);
-        } else {
-            return view('admin.aspiration.edit', [
-                'aspiration' => null,
-                'aspirationAddresses' => [],
-            ]);
+        // dd($aspiration, $aspirationAddresses, $statusLabels);
+        return view('admin.aspiration.edit', [
+            'aspiration' => $aspiration,
+            'aspirationAddresses' => $aspirationAddresses,
+            'statusLabels' => $statusLabels,
+        ]);
+    } else {
+        return view('admin.aspiration.edit', [
+            'aspiration' => null,
+            'aspirationAddresses' => [],
+            'statusLabels' => config('aspiration.status'),
+        ]);
         }
 
     }
@@ -172,27 +176,31 @@ class AspirationController extends Controller
         return null;
     }
 
+
     public function update_aspiration(Request $request)
-    {
-        try {
-            $response = $this->send_request('patch', 'http://localhost:3000/api/v1/aspiration/'. $request->aspiration_id, true, [
-                'user_id' => Session::get('_user_id'),
-                'aspiration_address_id' => $request->aspiration_address_id,
-                'aspiration_status' => $request->aspiration_status,
-                'aspiration' => $request->aspiration
+{
+    try {
+        // Kirim request ke API
 
-            ]);
+        $response = $this->send_request('patch', 'http://localhost:3000/api/v1/aspiration/' . $request->aspiration_id, true, [
+            'user_id' => Session::get('_user_id'),
+            'aspiration' => $request->aspiration,
+            'aspiration_status' => $request->aspiration_status,
+            'aspiration_address_id' => $request->aspiration_address_id,
+        ]);
 
-            if ($response->successful()) {
-                return redirect('/aspiration');
-            }else {
-                return back();
-            }
-
-        } catch (\Throwable $e) {
-            dd($e->getMessage());
+        if ($response->successful()) {
+            return redirect('/aspiration')->with('success', 'Aspiration updated successfully');
+        } else {
+            return back()->withErrors(['msg' => 'Failed to update aspiration']);
         }
+    } catch (\Throwable $e) {
+        return back()->withErrors(['msg' => $e->getMessage()]);
     }
+}
+
+
+
 
     public function delete_aspiration(Request $request)
     {
@@ -211,44 +219,7 @@ class AspirationController extends Controller
     }
 
 
-    public function show_aspiration_edit_status_form(Request $request)
-    {
-        $response = Http::get('get', 'http://localhost:3000/api/v1/aspiration/'. $request->aspiration_id, true);
-
-        Log::info('API Response: ' . $response->body());
-
-        if ($response->successful()) {
-            $aspirationAddresses = $this->getAspirationAddresses($response);
-            return view('admin.aspiration.editstatus', [
-                'aspiration' => $aspiration,
-            ]);
-        } else {
-            return view('admin.aspiration.editstatus', [
-                'aspiration' => [],
-            ]);
-        }
-    }
-
-    public function update_status_aspiration(Request $request)
-    {
-        try {
-            $response = $this->send_request('patch', 'http://localhost:3000/api/v1/aspiration/status/'. $request->aspiration_id, true, [
-                'user_id' => Session::get('_user_id'),
-                'aspiration_address_id' => $request->aspiration_address_id,
-                'aspiration' => $request->aspiration
-
-            ]);
-
-            if ($response->successful()) {
-                return redirect('/aspiration');
-            }else {
-                return back();
-            }
-
-        } catch (\Throwable $e) {
-            dd($e->getMessage());
-        }
-    }
+    
 
 
 

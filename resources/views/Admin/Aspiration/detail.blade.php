@@ -22,7 +22,6 @@
                 <div class="d-flex justify-content-between align-items-center mt-4">
 
               @if (Session::get('is_admin') === true)
-              <a href="{{url('/edit-aspiration/' . $aspiration["aspiration_id"])}}" class="btn btn-success">Verifikasi Status Aspirasi</a>
 
               <a href="{{url('/edit-aspiration/' . $aspiration["aspiration_id"])}}" class="btn btn-warning">Edit Aspirasi</a>
 

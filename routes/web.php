@@ -112,13 +112,19 @@ Route::middleware([Authenticate::class, AdminOnly::class])->group(function () {
 
   Route::get('/aspiration', [AspirationController::class, 'get_all_aspiration']);
   Route::get('/detail/aspiration/{aspiration_id}', [AspirationController::class, 'get_detail_aspiration']);
+
   Route::get('/aspiration/create', [AspirationController::class, 'show_create_aspiration_form']);
   Route::post('/store-aspiration', [AspirationController::class, 'store_aspiration_data']);
+
   Route::get('/edit-aspiration/{aspiration_id}', [AspirationController::class, 'show_aspiration_edit_form']);
+
   Route::patch('/edit-aspiration/{aspiration_id}', [AspirationController::class, 'update_aspiration']);
+
+
   Route::delete('/aspiration/{aspiration_id}/delete', [AspirationController::class, 'delete_aspiration']);
-  Route::get('/edit-aspiration/status/{aspiration_id}', [AspirationController::class, 'show_aspiration_edit_status_form']);
-  Route::patch('/edit-aspiration/{aspiration_id}', [AspirationController::class, 'update_status_aspiration']);
+
+  // Route::get('/edit-aspiration/status/{aspiration_id}', [AspirationController::class, 'show_aspiration_edit_status_form']);
+  // Route::patch('/edit-aspiration/{aspiration_id}', [AspirationController::class, 'update_status_aspiration']);
 
 
 
