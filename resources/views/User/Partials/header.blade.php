@@ -91,7 +91,11 @@
             <a class="nav-link" href="{{url('/user/dashboard')}}">Home</a>
           </li>
           <li class="nav-item">
+          
             <a class="nav-link" href="{{url('/candidates')}}">Calon Kandidat</a>
+          </li>
+          <li class="nav-item">
+          <a class="nav-link" href="{{url('/user/aspiration')}}">Aspirasi</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="{{url('/create-votes')}}">Voting!!</a>

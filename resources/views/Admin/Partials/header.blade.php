@@ -95,6 +95,12 @@
           </li>
           <li class="nav-item">
             <a class="nav-link" href="{{url('/create-candidate')}}">Buat Kandidat</a>
+            <li class="nav-item">
+            <a class="nav-link" href="{{url('/aspiration-address')}}">Tujuan Aspirasi</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{url('/aspiration')}}">Aspirasi</a>
+          </li>
           </li> 
           <li class="nav-item">
             <a class="nav-link" href="{{url('/create-votes')}}">Voting!!</a>
