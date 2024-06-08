@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Session;
 class AuthController extends Controller
 {
 
-    public function show_login_form() 
+    public function show_login_form()
     {
         return view('Authentication.login');
     }
@@ -18,7 +18,7 @@ class AuthController extends Controller
     {
         try {
             $validate_credentials = $request->validate([
-                'username' => 'required', 
+                'username' => 'required',
                 'user_password' => 'required'
             ]);
 
@@ -30,6 +30,8 @@ class AuthController extends Controller
                 'user_password' => $validate_credentials['user_password']
             ]);
 
+
+
             if ($response->successful()) {
                 $data = $response->json();
                 Session::put('is_admin', $data['user_role'] === 'admin' ? true : false);
@@ -37,22 +39,23 @@ class AuthController extends Controller
                 Session::put('_access_token', $data['accessToken']);
                 Session::put('_user_id', $data['user_id']);
 
+                Session::put('_refresh_token', $data['refreshToken']);
+
                 if (Session::get('is_admin') === true) {
                     return view('Admin.index');
-                } else {
-                    return redirect(url('/login'));
+                } else if (Session::get('isAuthorize')) {
+                    return redirect(url('/user/dashboard'));
                 }
-
             } else {
+
                 return back();
             }
-
         } catch (\Throwable $e) {
             dd($e->getMessage());
         }
     }
 
-    public function show_register_form() 
+    public function show_register_form()
     {
         return view('Authentication.register');
     }
@@ -65,7 +68,7 @@ class AuthController extends Controller
                 'user_email' => 'required',
                 'user_password' => 'required|min:6',
             ]);
-    
+
             $response = Http::withHeaders([
                 'Content-Type' => 'application/json',
                 'Accept' => 'application/json'
@@ -81,7 +84,6 @@ class AuthController extends Controller
             } else {
                 return back();
             }
-    
         } catch (\Throwable $e) {
             dd($e->getMessage());
         }
@@ -95,22 +97,47 @@ class AuthController extends Controller
                 'Authorization' => 'Bearer ' . Session::get('_access_token')
             ])->post('http://localhost:3000/api/v1/users/logout');
 
-
             if ($response->successful()) {
-                $request->session()->invalidate();
-                $request->session()->regenerateToken();
-                return redirect(url('/'));
-            } else {
-                return back();
+                if ($response->status() === 401) {
+                    dd('hellow');
+                    // Handle token expired scenario
+                    $response = Http::withHeaders([
+                        'Content-Type' => 'application/json'
+                    ])->post('http://localhost:3000/api/v1/users/access-token', [
+                        'token' => Session::get('_refresh_token')
+                    ]);
+
+                    if ($response->successful()) {
+                        $data = $response->json();
+                        Session::put('_access_token', $data['accessToken']);
+                        Session::put('_refresh_token', $data['refreshToken']);
+
+                        $response = Http::withHeaders([
+                            'Accept' => 'application/json',
+                            'Authorization' => 'Bearer ' . Session::get('_access_token')
+                        ])->post('http://localhost:3000/api/v1/users/logout');
+
+                        if ($response->successful()) {
+                            $request->session()->invalidate();
+                            $request->session()->regenerateToken();
+                            return redirect(url('/'));
+                        }
+                    }
+                } else {
+
+                    $request->session()->regenerateToken();
+                    return redirect(url('/'));
+                }
             }
 
+            return back();
         } catch (\Throwable $e) {
             dd($e->getMessage());
         }
     }
 
+
     public function store_token(Request $request)
     {
-        
     }
 }
