@@ -133,18 +133,3 @@ Route::middleware([Authenticate::class, AdminOnly::class])->group(function () {
 
 
 });
-
-
-Route::get('/user/dashboard', [UserController::class, 'show_home']);
-
-// ! Asspiration
-// Route::post('/aspiration/store', [AspirationController::class, 'store']);
-
-
-
-
-//Test FE
-Route::get('/test', function () {
-    return view('admin.aspirationaddress.test');
-});
-

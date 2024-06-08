@@ -4,7 +4,7 @@
 
 <div class="container">
   <div class="container mt-5">
-    <h2 class="mb-4">Calon Kandidat</h2>
+    <h2 class="mb-4">Calon Kandidat guest</h2>
     <div class="row">
 
       @foreach ($candidates as $candidate)

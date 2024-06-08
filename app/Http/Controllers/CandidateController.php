@@ -17,9 +17,23 @@ class CandidateController extends Controller
             if ($response->successful()) {
                 $candidates_data = $response->json();
 
-                return view('User.Candidates.candidates', [
-                    'candidates' => $candidates_data['data']
+                if (Session::get('is_admin') === true)
+                    return view('Admin.Candidates.candidates', [
+                        'candidates' => $candidates_data['data']
+
                 ]);
+                    if (Session::get('is_admin') === False)
+                        return view('User.Candidates.candidates', [
+                            'candidates' => $candidates_data['data']
+                        
+                ]);
+                
+                if(!Session::has('isAuthorize'))
+                    return view('Guest.Candidates.candidates', [
+                        'candidates' => $candidates_data['data']
+                
+                ]);
+
             }else {
                 return back();
             }
@@ -37,9 +51,25 @@ class CandidateController extends Controller
 
                 $candidate_data = $response->json();
 
+                
+                if (Session::get('is_admin') === true)
+
                 return view('Admin.Candidates.detail-candidate', [
                     'candidate' => $candidate_data['data']['candidate']
                 ]);
+
+                if (Session::get('is_admin') === False)
+                        return view('User.Candidates.detail-candidate', [
+                            'candidate' => $candidate_data['data']['candidate']
+                        
+                ]);
+
+                if(!Session::has('isAuthorize'))
+                    return view('Guest.Candidates.detail-candidate', [
+                        'candidate' => $candidate_data['data']['candidate']
+                
+                ]);
+                
             }else {
                 return back();
             }
@@ -52,7 +82,7 @@ class CandidateController extends Controller
 
     public function show_create_candidate_form()
     {
-        return view('User.Candidates.create-candidate');
+        return view('Admin.Candidates.create-candidate');
     }
 
     public function store_candidate_data(Request $request)
@@ -70,7 +100,7 @@ class CandidateController extends Controller
             ]);
 
             if ($response->successful()) {
-                return back();
+                return redirect(url('/admin/dashboard'));
             } else {
                 return back();
             }
@@ -88,7 +118,7 @@ class CandidateController extends Controller
 
             $candidate_data = $response->json();
 
-            return view('User.Candidates.update-candidate', [
+            return view('Admin.Candidates.update-candidate', [
                 'candidate' => $candidate_data['data']['candidate']
             ]);
         }else {
