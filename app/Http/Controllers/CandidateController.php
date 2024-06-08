@@ -17,9 +17,23 @@ class CandidateController extends Controller
             if ($response->successful()) {
                 $candidates_data = $response->json();
 
-                return view('User.Candidates.candidates', [
-                    'candidates' => $candidates_data['data']
+                if (Session::get('is_admin') === true)
+                    return view('Admin.Candidates.candidates', [
+                        'candidates' => $candidates_data['data']
+
                 ]);
+                    if (Session::get('is_admin') === False)
+                        return view('User.Candidates.candidates', [
+                            'candidates' => $candidates_data['data']
+                        
+                ]);
+                
+                if(!Session::has('isAuthorize'))
+                    return view('Guest.Candidates.candidates', [
+                        'candidates' => $candidates_data['data']
+                
+                ]);
+
             }else {
                 return back();
             }
@@ -28,7 +42,7 @@ class CandidateController extends Controller
     }
 
 
-    public function get_details_candidate(Request $request) 
+    public function get_details_candidate(Request $request)
     {
         try {
             $response = Http::get('http://localhost:3000/api/v1/candidates/' . $request->candidate_slug);
@@ -37,9 +51,25 @@ class CandidateController extends Controller
 
                 $candidate_data = $response->json();
 
-                return view('User.Candidates.detail-candidate', [
+                
+                if (Session::get('is_admin') === true)
+
+                return view('Admin.Candidates.detail-candidate', [
                     'candidate' => $candidate_data['data']['candidate']
                 ]);
+
+                if (Session::get('is_admin') === False)
+                        return view('User.Candidates.detail-candidate', [
+                            'candidate' => $candidate_data['data']['candidate']
+                        
+                ]);
+
+                if(!Session::has('isAuthorize'))
+                    return view('Guest.Candidates.detail-candidate', [
+                        'candidate' => $candidate_data['data']['candidate']
+                
+                ]);
+                
             }else {
                 return back();
             }
@@ -52,7 +82,7 @@ class CandidateController extends Controller
 
     public function show_create_candidate_form()
     {
-        return view('User.Candidates.create-candidate');
+        return view('Admin.Candidates.create-candidate');
     }
 
     public function store_candidate_data(Request $request)
@@ -70,7 +100,7 @@ class CandidateController extends Controller
             ]);
 
             if ($response->successful()) {
-                return back();
+                return redirect(url('/admin/dashboard'));
             } else {
                 return back();
             }
@@ -88,13 +118,13 @@ class CandidateController extends Controller
 
             $candidate_data = $response->json();
 
-            return view('User.Candidates.update-candidate', [
+            return view('Admin.Candidates.update-candidate', [
                 'candidate' => $candidate_data['data']['candidate']
             ]);
         }else {
             return back();
         }
-        
+
        } catch (\Throwable $e) {
             dd($e->getMessage());
        }
@@ -112,7 +142,7 @@ class CandidateController extends Controller
                 "candidate_biography" => $request->candidate_biography,
                 "candidate_vision" => $request->candidate_vision,
                 "candidate_mission" => $request->candidate_mission
-                
+
             ]);
 
             if ($response->successful()) {
@@ -126,7 +156,7 @@ class CandidateController extends Controller
         }
     }
 
-    public function delete_candidate(Request $request) 
+    public function delete_candidate(Request $request)
     {
         try {
             $response = Http::withHeaders([

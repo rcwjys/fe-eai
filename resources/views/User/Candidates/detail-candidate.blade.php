@@ -1,5 +1,5 @@
-@extends('Admin.Template.main')
-@section('title', 'Candidate')
+@extends('User.Template.main')
+@section('title', 'Detail Candidate')
 @section('content')
 
 <div class="container">
@@ -7,7 +7,6 @@
     <h2 class="mb-4">Calon Kandidat</h2>
     <div class="row">
 
-      @foreach ($candidates as $candidate)
       <div class="col-md-4 mb-4">
         <div class="card">
             <div class="card-body">
@@ -20,23 +19,10 @@
                 <br>
                 <p class="card-text ">Vision</p>
                 <p class="card-text">{{$candidate["candidate_vision"]}}</p>
-
-              <a class="ml-1" href="{{url('/candidates/'. $candidate["candidate_slug"])}}">Detail </a>
-
-              @if (Session::get('is_admin') === true)
-              <a href="{{url('/edit-candidate/' . $candidate["candidate_slug"])}}">Update Kandidat</a>
-
-              <form action="{{url('/candidate/'.$candidate["candidate_id"].'/delete')}}" method="POST" >
-                @csrf
-                @method('DELETE')
-              <button type="submit">Delete</button>
-              </form>
-              @endif
-              
+              <a href="{{url('/candidates')}}">Kembali</a>
             </div>
         </div>
     </div>
-      @endforeach
     </div>
 </div>
 </div>

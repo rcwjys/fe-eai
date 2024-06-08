@@ -1,10 +1,10 @@
-@extends('Guest.Template.main')
+@extends('User.Template.main')
 @section('title', 'Candidate')
 @section('content')
 
 <div class="container">
   <div class="container mt-5">
-    <h2 class="mb-4">Calon Kandidat</h2>
+    <h2 class="mb-4">Calon Kandidat user</h2>
     <div class="row">
 
       @foreach ($candidates as $candidate)

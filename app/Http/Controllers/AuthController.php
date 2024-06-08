@@ -31,7 +31,6 @@ class AuthController extends Controller
             ]);
 
 
-
             if ($response->successful()) {
                 $data = $response->json();
                 Session::put('is_admin', $data['user_role'] === 'admin' ? true : false);
@@ -39,12 +38,14 @@ class AuthController extends Controller
                 Session::put('_access_token', $data['accessToken']);
                 Session::put('_user_id', $data['user_id']);
 
-                Session::put('_refresh_token', $data['refreshToken']);
-
                 if (Session::get('is_admin') === true) {
                     return view('Admin.index');
-                } else if (Session::get('isAuthorize')) {
-                    return redirect(url('/user/dashboard'));
+                } else {
+                    if (Session::get('isAuthorize')) {
+                        return redirect(url('/user/dashboard'));
+                    } else {
+                        return redirect(url('/login'));
+                    }
                 }
             } else {
 
@@ -71,7 +72,8 @@ class AuthController extends Controller
 
             $response = Http::withHeaders([
                 'Content-Type' => 'application/json',
-                'Accept' => 'application/json'
+                'Accept' => 'application/json',
+                'Authorization' => 'Bearer ' . Session::get('_access_token')
             ])->post('http://localhost:3000/api/v1/users/register', [
                 'username' => $register_validate['username'],
                 'user_email' => $register_validate['user_email'],
@@ -82,6 +84,7 @@ class AuthController extends Controller
             if ($response->successful()) {
                 return back();
             } else {
+                dd($response->json());
                 return back();
             }
         } catch (\Throwable $e) {
@@ -98,9 +101,11 @@ class AuthController extends Controller
             ])->post('http://localhost:3000/api/v1/users/logout');
 
             if ($response->successful()) {
-                if ($response->status() === 401) {
-                    dd('hellow');
-                    // Handle token expired scenario
+                $request->session()->invalidate();
+                $request->session()->regenerateToken();
+                return redirect(url('/'));
+            } else {
+                if ($response->status() === 403) {
                     $response = Http::withHeaders([
                         'Content-Type' => 'application/json'
                     ])->post('http://localhost:3000/api/v1/users/access-token', [
@@ -124,20 +129,12 @@ class AuthController extends Controller
                         }
                     }
                 } else {
-
                     $request->session()->regenerateToken();
                     return redirect(url('/'));
                 }
             }
-
-            return back();
         } catch (\Throwable $e) {
             dd($e->getMessage());
         }
-    }
-
-
-    public function store_token(Request $request)
-    {
     }
 }
