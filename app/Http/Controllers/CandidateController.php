@@ -42,7 +42,7 @@ class CandidateController extends Controller
     }
 
 
-    public function get_details_candidate(Request $request) 
+    public function get_details_candidate(Request $request)
     {
         try {
             $response = Http::get('http://localhost:3000/api/v1/candidates/' . $request->candidate_slug);
@@ -50,8 +50,10 @@ class CandidateController extends Controller
             if ($response->successful()) {
 
                 $candidate_data = $response->json();
+
                 
                 if (Session::get('is_admin') === true)
+
                 return view('Admin.Candidates.detail-candidate', [
                     'candidate' => $candidate_data['data']['candidate']
                 ]);
@@ -122,7 +124,7 @@ class CandidateController extends Controller
         }else {
             return back();
         }
-        
+
        } catch (\Throwable $e) {
             dd($e->getMessage());
        }
@@ -140,7 +142,7 @@ class CandidateController extends Controller
                 "candidate_biography" => $request->candidate_biography,
                 "candidate_vision" => $request->candidate_vision,
                 "candidate_mission" => $request->candidate_mission
-                
+
             ]);
 
             if ($response->successful()) {
@@ -154,7 +156,7 @@ class CandidateController extends Controller
         }
     }
 
-    public function delete_candidate(Request $request) 
+    public function delete_candidate(Request $request)
     {
         try {
             $response = Http::withHeaders([
