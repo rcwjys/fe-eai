@@ -6,12 +6,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
-use Throwable;
 
-
-
-
-class AspirationController extends Controller
+class UserAspirationController extends Controller
 {
     public function send_request(String $method, String $url, Bool $header, array $data = [])
     {
@@ -40,18 +36,29 @@ class AspirationController extends Controller
 
     public function get_all_aspiration(Request $request)
     {
+        $user_id = Session::get('_user_id'); // Mengambil user ID dari sesi dengan kunci yang benar
 
-        $response = $this->send_request('get','http://localhost:3000/api/v1/aspiration', true);
+    // Log user ID untuk debugging
+    Log::info('User ID from session: ' . $user_id);
+
+    if (!$user_id) {
+        // Jika user_id tidak ada dalam sesi, berikan pesan error atau redirect
+        Log::error('User ID tidak ditemukan dalam sesi.');
+        return redirect()->route('login')->withErrors('User ID tidak ditemukan dalam sesi.');
+    }
+
+    // Perbarui URL endpoint API dengan format yang benar
+    $response = $this->send_request('get', 'http://localhost:3000/api/v1/aspiration/userId/' . $user_id, true);
 
         Log::info('API Response: ' . $response->body());
 
         if ($response->successful()) {
             $aspiration = $this->getAspiration($response);
-            return view('admin.aspiration.index', [
+            return view('user.aspiration.index', [
                 'aspiration' => $aspiration,
             ]);
         } else {
-            return view('admin.aspiration.index', [
+            return view('user.aspiration.index', [
                 'aspiration' => [],
             ]);
         }
@@ -98,7 +105,7 @@ class AspirationController extends Controller
                     $aspiration['aspiration_address'] = 'Unknown Address';
                 }
 
-                return view('admin.aspiration.detail', ['aspiration' => $aspiration]);
+                return view('user.aspiration.detail', ['aspiration' => $aspiration]);
             } else {
                 return back();
             }
@@ -116,11 +123,11 @@ class AspirationController extends Controller
 
         if ($response->successful()) {
             $aspirationAddresses = $this->getAspirationAddresses($response);
-            return view('admin.aspiration.create', [
+            return view('user.aspiration.create', [
                 'aspirationAddresses' => $aspirationAddresses,
             ]);
         } else {
-            return view('admin.aspiration.create', [
+            return view('user.aspiration.create', [
                 'aspirationAddresses' => [],
             ]);
         }
@@ -150,7 +157,7 @@ class AspirationController extends Controller
                 'aspiration' => $request->aspiration
             ]);
             if ($response->successful()) {
-                return redirect(url('/aspiration'));
+                return redirect(url('/user/aspiration'));
             } else {
                 dd($response->json());
                 return back();
@@ -161,28 +168,24 @@ class AspirationController extends Controller
         }
     }
 
-
     public function show_aspiration_edit_form(Request $request)
     {
-        $aspirationResponse = $this->send_request('get', 'http://localhost:3000/api/v1/aspiration/' . $request->aspiration_id, true);
+    $aspirationResponse = $this->send_request('get', 'http://localhost:3000/api/v1/aspiration/' . $request->aspiration_id, true);
         $addressesResponse = $this->send_request('get','http://localhost:3000/api/v1/aspiration-addresses?aspiration_id=' . $request->aspiration_id, true);
 
         if ($aspirationResponse->successful() && $addressesResponse->successful()) {
             $aspiration = $this->getAspirationData($aspirationResponse);
             $aspirationAddresses = $this->getAspirationAddresses($addressesResponse);
-            $statusLabels = config('aspiration.Status');
 
         // dd($aspiration, $aspirationAddresses, $statusLabels);
-        return view('admin.aspiration.edit', [
+        return view('user.aspiration.edit', [
             'aspiration' => $aspiration,
             'aspirationAddresses' => $aspirationAddresses,
-            'statusLabels' => $statusLabels,
         ]);
     } else {
-        return view('admin.aspiration.edit', [
+        return view('user.aspiration.edit', [
             'aspiration' => null,
             'aspirationAddresses' => [],
-            'statusLabels' => config('aspiration.status'),
         ]);
         }
 
@@ -199,29 +202,25 @@ class AspirationController extends Controller
         return null;
     }
 
-
-
     public function update_aspiration(Request $request)
-{
-    try {
+    {
+        try {
+            $response = $this->send_request('patch', 'http://localhost:3000/api/v1/aspiration/'. $request->aspiration_id, true, [
+                'user_id' => Session::get('_user_id'),
+                'aspiration_address_id' => $request->aspiration_address_id,
+                'aspiration' => $request->aspiration
 
-        $response = $this->send_request('patch', 'http://localhost:3000/api/v1/aspiration/' . $request->aspiration_id, true, [
-            'user_id' => Session::get('_user_id'),
-            'aspiration' => $request->aspiration,
-            'aspiration_status' => $request->aspiration_status,
-            'aspiration_address_id' => $request->aspiration_address_id,
-        ]);
+            ]);
 
-        if ($response->successful()) {
-            return redirect('/aspiration')->with('success', 'Aspiration updated successfully');
-        } else {
-            return back()->withErrors(['msg' => 'Failed to update aspiration']);
+            if ($response->successful()) {
+                return redirect('/user/aspiration')->with('success', 'Aspiration updated successfully');
+            } else {
+                return back()->withErrors(['msg' => 'Failed to update aspiration']);
+            }
+        } catch (\Throwable $e) {
+            return back()->withErrors(['msg' => $e->getMessage()]);
         }
-    } catch (\Throwable $e) {
-        return back()->withErrors(['msg' => $e->getMessage()]);
     }
-}
-
 
     public function delete_aspiration(Request $request)
     {
@@ -229,9 +228,7 @@ class AspirationController extends Controller
             $response = $this->send_request('delete', 'http://localhost:3000/api/v1/aspiration/' . $request->aspiration_id, true);
 
             if ($response->successful()) {
-
-                return redirect(url('/aspiration'));
-
+                return redirect(url('/user/aspiration'));
             } else {
                 dd($response->json());
                 return back();
@@ -240,6 +237,53 @@ class AspirationController extends Controller
             dd($e->getMessage());
         }
     }
+
+
+    public function show_aspiration_edit_status_form(Request $request)
+    {
+        $response = Http::get('get', 'http://localhost:3000/api/v1/aspiration/'. $request->aspiration_id, true);
+
+        Log::info('API Response: ' . $response->body());
+
+        if ($response->successful()) {
+            $aspirationAddresses = $this->getAspirationAddresses($response);
+            return view('user.aspiration.editstatus', [
+                'aspiration' => $aspirationAddresses,
+            ]);
+        } else {
+            return view('user.aspiration.editstatus', [
+                'aspiration' => [],
+            ]);
+        }
+    }
+
+    public function update_status_aspiration(Request $request)
+    {
+        try {
+            $response = $this->send_request('patch', 'http://localhost:3000/api/v1/aspiration/status/'. $request->aspiration_id, true, [
+                'user_id' => Session::get('_user_id'),
+                'aspiration_address_id' => $request->aspiration_address_id,
+                'aspiration' => $request->aspiration
+
+            ]);
+
+            if ($response->successful()) {
+                return redirect('/aspiration');
+            }else {
+                return back();
+            }
+
+        } catch (\Throwable $e) {
+            dd($e->getMessage());
+        }
+    }
+
+
+
+
+
+
+
 
 
 

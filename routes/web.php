@@ -8,6 +8,7 @@ use App\Http\Controllers\GuestController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AspirationController;
 use App\Http\Controllers\VoteController;
+use App\Http\Controllers\UserAspirationController;
 use App\Http\Controllers\AspirationAddressController;
 use App\Http\Middleware\AddTokenMiddleware;
 use App\Http\Middleware\AdminOnly;
@@ -112,24 +113,25 @@ Route::middleware([Authenticate::class, AdminOnly::class])->group(function () {
 
   Route::get('/aspiration', [AspirationController::class, 'get_all_aspiration']);
   Route::get('/detail/aspiration/{aspiration_id}', [AspirationController::class, 'get_detail_aspiration']);
-
   Route::get('/aspiration/create', [AspirationController::class, 'show_create_aspiration_form']);
   Route::post('/store-aspiration', [AspirationController::class, 'store_aspiration_data']);
-
   Route::get('/edit-aspiration/{aspiration_id}', [AspirationController::class, 'show_aspiration_edit_form']);
-
   Route::patch('/edit-aspiration/{aspiration_id}', [AspirationController::class, 'update_aspiration']);
-
-
   Route::delete('/aspiration/{aspiration_id}/delete', [AspirationController::class, 'delete_aspiration']);
 
 
+// USER
 
+Route::middleware([Authenticate::class])->group(function () {
+  Route::get('/user/aspiration', [UserAspirationController::class, 'get_all_aspiration']);}); 
+  // Route::get('/user/detail/aspiration/{aspiration_id}', [UserAspirationController::class, 'get_detail_aspiration']);
 
+Route::get('/aspiration/create', [UserAspirationController::class, 'show_create_aspiration_form']);
+Route::post('/store-aspiration', [UserAspirationController::class, 'store_aspiration_data']);
+Route::get('/detail/aspiration/{aspiration_id}', [UserAspirationController::class, 'get_detail_aspiration']);
 
-
-
-
-
-
+Route::get('/user/edit-aspiration/{aspiration_id}', [UserAspirationController::class, 'show_aspiration_edit_form']);
+Route::delete('/user/aspiration/{aspiration_id}/delete', [UserAspirationController::class, 'delete_aspiration']);
+Route::patch('/user/edit-aspiration/{aspiration_id}', [UserAspirationController::class, 'update_aspiration']);
 });
+
