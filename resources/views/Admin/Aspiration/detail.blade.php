@@ -12,17 +12,19 @@
         <div class="card">
             <div class="card-body">
                 <div class="d-flex justify-content-start align-items-center">
-                    <h5 class="card-title">{{$aspiration["aspiration"]}}</h5>
+
+                    <h5 class="card-title">Aspirasi : {{$aspiration["aspiration"]}}</h5>
                 </div>
 
-                <h6 class="card-title">Nama User   : {{$aspiration["user_id"]}}</h6>
-                <h6 class="card-title">Tujuan : {{$aspiration["aspiration_address_id"]}}</h6>
+                <h6 class="card-title mt-4">User   : {{$aspiration["username"]}}</h6>
+                <h6 class="card-title">Tujuan : {{$aspiration["aspiration_address"]}}</h6>
+
                 <h6 class="card-title">Status : {{$aspiration["aspiration_status"]}}</h6>
 
                 <div class="d-flex justify-content-between align-items-center mt-4">
 
               @if (Session::get('is_admin') === true)
-              <a href="{{url('/edit-aspiration/' . $aspiration["aspiration_id"])}}" class="btn btn-success">Verifikasi Status Aspirasi</a>
+
 
               <a href="{{url('/edit-aspiration/' . $aspiration["aspiration_id"])}}" class="btn btn-warning">Edit Aspirasi</a>
 

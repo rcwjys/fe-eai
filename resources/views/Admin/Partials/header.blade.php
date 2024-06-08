@@ -106,6 +106,12 @@
             <a class="nav-link" href="{{url('/create-votes')}}">Voting!!</a>
           </li>
           <li class="nav-item">
+            <a class="nav-link" href="{{url('/aspiration-address')}}">Tujuan Aspirasi</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{url('/aspiration')}}">Aspirasi</a>
+          </li>
+          <li class="nav-item">
             <a class="nav-link" href="{{url('/register')}}">Buat User</a>
           </li>
           <li class="nav-item">
@@ -124,3 +130,4 @@
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 </body>
 </html>
+

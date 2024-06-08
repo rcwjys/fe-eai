@@ -5,6 +5,7 @@
 <div class="container mt-3">
   <div class="jumbotron jumbotron-fluid">
     <div class="container">
+
       <h2 class="display-4 mb-4">Halo Mahasiswa Sistem Informasi</h2>
 
       <div class="card card-sm w-75 mt-2">
@@ -13,7 +14,6 @@
 
             <form method="POST" action="/store-aspiration">
                 @csrf
-
                 <div class="form-floating mb-4">
                     <select class="form-select" id="floatingSelect" name="aspiration_address_id" aria-label="Floating label select example">
                         <option selected disabled>Tujuan Aspirasi</option>
