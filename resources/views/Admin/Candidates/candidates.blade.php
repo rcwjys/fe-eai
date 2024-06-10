@@ -20,6 +20,10 @@
                 <br>
                 <p class="card-text ">Vision</p>
                 <p class="card-text">{{$candidate["candidate_vision"]}}</p>
+              
+                <br>
+                <p class="card-text ">Total Voting</p>
+                <p class="card-text">{{$candidate["candidate_vote_total"]}}</p>
 
               <a class="ml-1" href="{{url('/candidates/'. $candidate["candidate_slug"])}}">Detail </a>
 
@@ -32,7 +36,7 @@
               <button type="submit">Delete</button>
               </form>
               @endif
-              
+
             </div>
         </div>
     </div>
